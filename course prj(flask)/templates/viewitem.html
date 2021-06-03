@@ -17,16 +17,28 @@
     
         <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
 
-          <a class="me-3 py-2 text-dark text-decoration-none" href="create">Добавить товар</a> 
-          <a class="me-3 py-2 text-dark text-decoration-none" href="logout">Выйти</a>
+          <a class="me-3 py-2 text-dark text-decoration-none" href="/create">Добавить товар</a>
+         
+          <a class="me-3 py-2 text-dark text-decoration-none" href="/logout">Выйти</a>
           
           
         </nav>
       </header>
-      
+      {%for el in data%}
       <div>
-        <h1> {{data.title}}</h1>
-        <h2>{{data.describtion}}</h2>
-        <a href = / >вернутся в магазин</a>
+        <h1> {{el.title}}</h1>
+        
+        <img src = {{el.describtion}} class = "picdesc" width="200" height="200">
+        <p class = "display-4 fw-normal"> {{el.category}}</p>
+        <a href ="/buy/{{el.iditem}}" class="w-100 btn btn-lg btn-outline-primary">купить</a>
+        <a href = / class="w-100 btn btn-lg btn-outline-primary" >вернутся в магазин</a>
       </div>
+      {%endfor%}
+      {% for reply in reply %}
+    <div>{{ reply.text }}&nbsp;
+        {% for tag in reply.tagrep %}
+            <b>#{{ tag.text }}</b>
+        {% endfor %}
+    </div>
+    {% endfor %}
     </body>
