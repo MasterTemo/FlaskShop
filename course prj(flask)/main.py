@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import update, delete, insert
+from sqlalchemy.exc import InvalidRequestError
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user #новое
 from werkzeug.security import check_password_hash, generate_password_hash #новое
 from cloudipsp import Api, Checkout
@@ -24,11 +25,13 @@ class category(db.Model):
     name = db.Column(db.Text, nullable = False)
     catedesc = db.Column(db.Text, nullable = True)
 
+
 class help(db.Model):
     id = db.Column(db.Integer, primary_key = True) 
     name = db.Column(db.Text, nullable = False)
     Email = db.Column(db.Text, nullable = True)
     problem = db.Column(db.Text,nullable = False)
+
 
 # Таблица со всеми товарами
 class Item(db.Model): 
@@ -46,7 +49,7 @@ class Item(db.Model):
 # Таблица со всеми пользователями
 class User(db.Model, UserMixin): 
     id = db.Column(db.Integer, primary_key = True)
-    login = db.Column(db.String(40), nullable = False)
+    login = db.Column(db.String(40), nullable = False, unique = True)
     password = db.Column(db.String(40), nullable = False)
     userpic = db.Column(db.Text, nullable = True)
     userinfo = db.Column(db.Text, nullable = True)
@@ -86,6 +89,11 @@ class Tagrep(db.Model):
     text = db.Column(db.String(32), nullable=False)
     message_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=False)
     reply = db.relationship('reply', backref=db.backref('tagrep', lazy=True))
+
+
+class order(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    product = db.Column(db.Text, nullable = False)
 
 
 # Логин менеджер
@@ -132,7 +140,6 @@ def add_message():
 
 @app.route('/help', methods = ['POST', 'GET'])
 def helpuser():
-    
     if request.method == "POST":
         name = request.form['name']
         Email = request.form['Email']
@@ -170,6 +177,7 @@ def create():
 @app.route('/complete')
 def complete():
     return render_template('complete.html')
+
 
 # Информация о товаре
 @app.route('/product/<id>')
@@ -213,19 +221,19 @@ def register():
     login = request.form.get('login')
     password = request.form.get('password')
     password2 = request.form.get('password2')
-    userpic = request.form.get('userpic')
-    
+    userpic = request.form.get('userpic')   
     if request.method == 'POST':
         if not (login or password or password2):
             flash('Please, fill all fields!')
+        elif InvalidRequestError:    
+            flash('Логин уже использован другим пользователем')
         elif password != password2:
             flash('passwords are not equal')
         else:
             hash_pwd = generate_password_hash(password)
             new_user = User(login=login, password = hash_pwd, userpic = userpic)
             db.session.add(new_user)
-            db.session.commit()
-            
+            db.session.commit()          
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -238,7 +246,6 @@ def editprofile(id):
     userinform = User.query.get(id)
     if request.method == "POST":
         userinform.userinfo = request.form['userinfo']
-
         try:
            
             db.session.commit()
@@ -246,7 +253,6 @@ def editprofile(id):
         except:
             return "Ошибка"
     else:
-
         return render_template('editprofile.html', userinform = userinform)
 
 
@@ -255,10 +261,8 @@ def editprofile(id):
 def editpic(id):
     userpict = User.query.get(id)
     if request.method == "POST":
-        userpict.userpic = request.form['userpic']
-        
+        userpict.userpic = request.form['userpic']       
         try:
-
             db.session.commit()
             return redirect('/profile')
         except:
@@ -272,8 +276,6 @@ def edititem(id):
     iteminform = Item.query.get(id)
     if request.method == "POST":
         iteminform.category = request.form['category']
-       
-        
         try:
            
             db.session.commit()
@@ -289,7 +291,6 @@ def edititem(id):
 @login_required
 def delete(iditem):
     article = Item.query.get(iditem)
-
     try:
         db.session.delete(article)
         db.session.commit()
@@ -318,11 +319,11 @@ def supredirect():
 
 
 #Покупка товара с помощью стороннего сервиса оплаты
+#пофиксить выдачу id + title в другую таблицу
 @app.route('/buy/<id>')
 @login_required
 def item_buy(id):
     item = Item.query.get(id)
-
     api = Api(merchant_id=1396424,
         secret_key='test')
     checkout = Checkout(api=api)
@@ -343,6 +344,26 @@ def location():
 @login_required
 def aboutus():
     return render_template('aboutus.html')
+
+
+@app.route('/FAQ')
+def questions():
+    return render_template('FAQ.html')
+
+
+@app.route('/FAQ/register')
+def questionreg():
+    return render_template('FAQreg.html')
+
+
+@app.route('/FAQ/buy')
+def questionbuy():
+    return render_template('FAQbuy.html')
+
+
+@app.route('/FAQ/editprofile')
+def questionedit():
+    return render_template('FAQedit.html')
 
 
 if __name__ == "__main__":
