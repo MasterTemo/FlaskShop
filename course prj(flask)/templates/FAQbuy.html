@@ -25,34 +25,6 @@
       
     </nav>
   </header>   
-  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol id="check" viewBox="0 0 16 16">
-      <title>Check</title>
-      <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
-    </symbol>
-  </svg>
-  
-  <div class="container py-3">
-    <div class = "card-deck mb=3 text-center">
-    {% for el in data %}
-    <div class="card mb-4 rounded-3 shadow-sm">
-      <div class="card-header py-3">
-        <img src={{el.describtion}} alt="нет картинки" class = "pic">
-        <h4 class="my-0 fw-normal">{{el.title}}</h4>
-        <h4 class="my-0 fw-normal">{{el.text}}</h4>
-      </div>
-      <div class="card-body">
-        <h1 class="card-title pricing-card-title">{{el.price}}<small class="text-muted fw-light">рублей</small></h1>
-        
-        <ul class="list-unstyled mt-3 mb-4">
-         
-        </ul>
-        <a href ="buy/{{el.iditem}}" class="w-100 btn btn-lg btn-outline-primary">купить</a>
-        <a href="product/{{el.iditem}}" class="w-100 btn btn-lg btn-outline-primary">О товаре</a>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
- 
-  </body>
-</html>
+    <h1>Чтобы купить товар вам требуется только нажать на кнопку "Купить" на главной странице или на странице товара</h1> 
+    <img src = "https://ih1.redbubble.net/image.562064936.0397/flat,1000x1000,075,f.u4.jpg" width = 700 height = 700> 
+</body>

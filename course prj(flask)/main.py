@@ -240,14 +240,24 @@ def register():
 
 #Старница редактирования инфы о юзере 
 #Отдельные страницы для редактирования описания профиля и изображения профиля
+#перекинуть в осной код
 @app.route('/editprofile/<id>', methods = ['GET','POST'])
 @login_required
 def editprofile(id):
     userinform = User.query.get(id)
     if request.method == "POST":
-        userinform.userinfo = request.form['userinfo']
+        if request.form['userinfo'] == "":
+            userinform.userinfo =  userinform.userinfo
+        else:
+            userinform.userinfo = request.form['userinfo']
+        if request.form['login'] == "":
+            userinfom.login = userinform.login
+        elif InvalidRequestError:
+            flash('Логин уже используется:(')
+            return redirect('/editprofile/<id>')
+        else:
+            userinform.login = request.form['login']
         try:
-           
             db.session.commit()
             return redirect('/profile')
         except:
@@ -261,7 +271,10 @@ def editprofile(id):
 def editpic(id):
     userpict = User.query.get(id)
     if request.method == "POST":
-        userpict.userpic = request.form['userpic']       
+        if request.form['userpic'] == "":
+            userpict.userpic = userpict.userpic
+        else:
+            userpict.userpic = request.form['userpic']       
         try:
             db.session.commit()
             return redirect('/profile')
@@ -270,14 +283,32 @@ def editpic(id):
     else:
         return render_template('editpic.html', userpict = userpict)
 
-
+#перекинуть в основной код
 @app.route('/edititem/<id>', methods = ['GET','POST'])
 def edititem(id):
     iteminform = Item.query.get(id)
     if request.method == "POST":
-        iteminform.category = request.form['category']
+        if request.form['price'] == "":            
+            iteminform.price = iteminform.price
+        else:
+            iteminform.price = request.form['price']
+        if request.form['text'] == "":
+            iteminform.text = iteminform.text
+        else:
+            iteminform.text = request.form['text']
+        if request.form['title'] == "":
+            iteminform.title = iteminform.title
+        else:
+            iteminform.title = request.form['title']
+        if request.form['category'] == "":
+            iteminform.category = iteminform.category
+        else:
+            iteminform.category = request.form['category']
+        if request.form['describtion'] == "":
+            iteminform.describtion = iteminform.describtion
+        else:
+            iteminform.describtion = request.form['describtion']
         try:
-           
             db.session.commit()
             return redirect('/')
         except:
@@ -351,17 +382,17 @@ def questions():
     return render_template('FAQ.html')
 
 
-@app.route('/FAQ/register')
+@app.route('/FAQ/FAQregister')
 def questionreg():
     return render_template('FAQreg.html')
 
 
-@app.route('/FAQ/buy')
+@app.route('/FAQ/FAQbuy')
 def questionbuy():
     return render_template('FAQbuy.html')
 
 
-@app.route('/FAQ/editprofile')
+@app.route('/FAQ/FAQedit')
 def questionedit():
     return render_template('FAQedit.html')
 
