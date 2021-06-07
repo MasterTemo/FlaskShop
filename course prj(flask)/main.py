@@ -2,12 +2,14 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import update, delete, insert
 from sqlalchemy.exc import InvalidRequestError
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user #новое
-from werkzeug.security import check_password_hash, generate_password_hash #новое
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user 
+from werkzeug.security import check_password_hash, generate_password_hash 
 from cloudipsp import Api, Checkout
+from flask_ngrok import run_with_ngrok
 
 
 app = Flask(__name__)
+run_with_ngrok(app)
 app.secret_key = 'master temo 1'
 
 
@@ -240,7 +242,7 @@ def register():
 
 #Старница редактирования инфы о юзере 
 #Отдельные страницы для редактирования описания профиля и изображения профиля
-#перекинуть в осной код
+#при пустом значении изначальное значение не меняется
 @app.route('/editprofile/<id>', methods = ['GET','POST'])
 @login_required
 def editprofile(id):
@@ -398,7 +400,7 @@ def questionedit():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
 
 
 
